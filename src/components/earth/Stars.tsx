@@ -39,7 +39,7 @@ const starFragmentShader = `
 export function PremiumStars({ compact }: { compact: boolean }) {
   return (
     <>
-      <DreiStars radius={28} depth={34} count={compact ? 540 : 1750} factor={compact ? 1.12 : 1.55} saturation={0.1} fade speed={0.08} />
+      <DreiStars radius={28} depth={34} count={compact ? 360 : 950} factor={compact ? 0.72 : 0.9} saturation={0.02} fade speed={0.05} />
       <GalaxyBand compact={compact} />
       <GlowingStarField compact={compact} />
     </>
@@ -51,7 +51,7 @@ function GlowingStarField({ compact }: { compact: boolean }) {
   const haloRef = useRef<THREE.Points>(null);
   const pointMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const haloMaterialRef = useRef<THREE.ShaderMaterial>(null);
-  const starCount = compact ? 180 : 520;
+  const starCount = compact ? 90 : 240;
 
   const { positions, colors, sizes } = useMemo(() => {
     const positions = new Float32Array(starCount * 3);
@@ -77,7 +77,7 @@ function GlowingStarField({ compact }: { compact: boolean }) {
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
 
-      sizes[i] = THREE.MathUtils.lerp(compact ? 0.016 : 0.018, compact ? 0.048 : 0.064, Math.random());
+      sizes[i] = THREE.MathUtils.lerp(compact ? 0.01 : 0.012, compact ? 0.026 : 0.034, Math.random());
     }
 
     return { positions, colors, sizes };
@@ -90,13 +90,13 @@ function GlowingStarField({ compact }: { compact: boolean }) {
       pointsRef.current.rotation.z = Math.sin(time * 0.08) * 0.012;
     }
     if (pointMaterialRef.current) {
-      pointMaterialRef.current.uniforms.opacity.value = compact ? 0.52 : 0.62 + Math.sin(time * 0.75) * 0.05;
+      pointMaterialRef.current.uniforms.opacity.value = compact ? 0.2 : 0.26 + Math.sin(time * 0.75) * 0.02;
     }
     if (haloRef.current) {
       haloRef.current.rotation.y = time * 0.004;
     }
     if (haloMaterialRef.current) {
-      haloMaterialRef.current.uniforms.opacity.value = compact ? 0.11 : 0.16 + Math.sin(time * 0.5) * 0.025;
+      haloMaterialRef.current.uniforms.opacity.value = compact ? 0.03 : 0.045 + Math.sin(time * 0.5) * 0.01;
     }
   });
 
@@ -106,13 +106,13 @@ function GlowingStarField({ compact }: { compact: boolean }) {
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions.slice(), 3]} />
           <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 230 : 280)), 1]} />
+          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 150 : 170)), 1]} />
         </bufferGeometry>
         <shaderMaterial
           ref={haloMaterialRef}
           vertexShader={starVertexShader}
           fragmentShader={starFragmentShader}
-          uniforms={{ opacity: { value: 0.16 } }}
+          uniforms={{ opacity: { value: 0.045 } }}
           vertexColors
           transparent
           depthWrite={false}
@@ -123,13 +123,13 @@ function GlowingStarField({ compact }: { compact: boolean }) {
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
           <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 92 : 112)), 1]} />
+          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 58 : 68)), 1]} />
         </bufferGeometry>
         <shaderMaterial
           ref={pointMaterialRef}
           vertexShader={starVertexShader}
           fragmentShader={starFragmentShader}
-          uniforms={{ opacity: { value: 0.62 } }}
+          uniforms={{ opacity: { value: 0.26 } }}
           vertexColors
           transparent
           depthWrite={false}
@@ -145,8 +145,8 @@ function GalaxyBand({ compact }: { compact: boolean }) {
   const coreRef = useRef<THREE.Points>(null);
   const bandMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const coreMaterialRef = useRef<THREE.ShaderMaterial>(null);
-  const dustCount = compact ? 130 : 470;
-  const coreCount = compact ? 46 : 150;
+  const dustCount = compact ? 70 : 220;
+  const coreCount = compact ? 22 : 70;
 
   const dust = useMemo(() => {
     const positions = new Float32Array(dustCount * 3);
@@ -168,7 +168,7 @@ function GalaxyBand({ compact }: { compact: boolean }) {
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
-      sizes[i] = THREE.MathUtils.lerp(compact ? 4.5 : 5.5, compact ? 12 : 17, Math.random());
+      sizes[i] = THREE.MathUtils.lerp(compact ? 2.8 : 3.5, compact ? 7 : 10, Math.random());
     }
 
     return { positions, colors, sizes };
@@ -192,7 +192,7 @@ function GalaxyBand({ compact }: { compact: boolean }) {
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
-      sizes[i] = THREE.MathUtils.lerp(compact ? 9 : 12, compact ? 20 : 28, Math.random());
+      sizes[i] = THREE.MathUtils.lerp(compact ? 5 : 7, compact ? 12 : 16, Math.random());
     }
 
     return { positions, colors, sizes };
@@ -205,14 +205,14 @@ function GalaxyBand({ compact }: { compact: boolean }) {
       bandRef.current.rotation.y = time * 0.003;
     }
     if (bandMaterialRef.current) {
-      bandMaterialRef.current.uniforms.opacity.value = compact ? 0.14 : 0.2 + Math.sin(time * 0.35) * 0.025;
+      bandMaterialRef.current.uniforms.opacity.value = compact ? 0.055 : 0.075 + Math.sin(time * 0.35) * 0.01;
     }
     if (coreRef.current) {
       coreRef.current.rotation.z = -0.24;
       coreRef.current.rotation.y = time * 0.005;
     }
     if (coreMaterialRef.current) {
-      coreMaterialRef.current.uniforms.opacity.value = compact ? 0.18 : 0.27 + Math.sin(time * 0.42) * 0.03;
+      coreMaterialRef.current.uniforms.opacity.value = compact ? 0.07 : 0.1 + Math.sin(time * 0.42) * 0.012;
     }
   });
 
@@ -228,7 +228,7 @@ function GalaxyBand({ compact }: { compact: boolean }) {
           ref={bandMaterialRef}
           vertexShader={starVertexShader}
           fragmentShader={starFragmentShader}
-          uniforms={{ opacity: { value: 0.2 } }}
+          uniforms={{ opacity: { value: 0.075 } }}
           vertexColors
           transparent
           depthWrite={false}
@@ -245,7 +245,7 @@ function GalaxyBand({ compact }: { compact: boolean }) {
           ref={coreMaterialRef}
           vertexShader={starVertexShader}
           fragmentShader={starFragmentShader}
-          uniforms={{ opacity: { value: 0.27 } }}
+          uniforms={{ opacity: { value: 0.1 } }}
           vertexColors
           transparent
           depthWrite={false}
