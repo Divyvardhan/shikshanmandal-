@@ -1432,7 +1432,8 @@ body {
   content: "";
   opacity: calc(0.12 + var(--earth-space) * 0.62);
   background:
-    radial-gradient(circle at 76% 38%, rgba(143, 198, 255, 0.24), transparent 25rem),
+    radial-gradient(circle at 72% 40%, rgba(143, 198, 255, 0.32), transparent 27rem),
+    radial-gradient(ellipse at 55% 52%, rgba(217, 232, 255, 0.12), transparent 34rem),
     radial-gradient(circle at 18% 20%, rgba(245, 217, 154, 0.14), transparent 18rem),
     linear-gradient(180deg, rgba(5, 5, 4, 0), rgba(8, 17, 28, 0.86));
   transition: opacity 200ms linear;
@@ -1443,12 +1444,14 @@ body {
   inset: 0;
   z-index: -1;
   content: "";
-  opacity: calc(var(--earth-space) * 0.34);
+  opacity: calc(0.1 + var(--earth-space) * 0.5);
   background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1px, transparent 1.5px),
-    radial-gradient(circle, rgba(245, 217, 154, 0.36) 0 1px, transparent 1.4px);
-  background-position: 0 0, 44px 71px;
-  background-size: 126px 126px, 188px 188px;
+    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.7px),
+    radial-gradient(circle, rgba(245, 217, 154, 0.58) 0 1px, transparent 1.55px),
+    radial-gradient(circle, rgba(143, 198, 255, 0.42) 0 1px, transparent 1.5px);
+  background-position: 0 0, 44px 71px, 91px 23px;
+  background-size: 118px 118px, 182px 182px, 236px 236px;
+  filter: drop-shadow(0 0 5px rgba(211, 231, 255, 0.35));
 }
 
 .shikshan-earth__copy {
