@@ -74,6 +74,33 @@ const process = [
   "Government Registration Certificate",
 ];
 
+const testimonials = [
+  {
+    name: "Dr. Dharmendra",
+    service: "UK Design Registration",
+    quote:
+      "I had a great experience working with Shikshan Mandal. The team guided me from title finalization to filing with complete professionalism. Their knowledge of intellectual property and prompt communication made the entire process hassle-free. Highly recommended for UK Design Registration services.",
+  },
+  {
+    name: "Dr. Rajesh Sharma",
+    service: "Customer Support",
+    quote:
+      "Outstanding service and excellent customer support. The experts explained every step clearly and completed the process within the promised timeline. I appreciate their dedication and professionalism.",
+  },
+  {
+    name: "Prof. Amit Kumar",
+    service: "Design Registration",
+    quote:
+      "Shikshan Mandal has a highly experienced team. Their end-to-end support, quick response, and transparent process gave me complete confidence throughout my design registration journey. Thank you for the excellent service.",
+  },
+  {
+    name: "Dr. Neha Singh",
+    service: "IP Services",
+    quote:
+      "Excellent experience from consultation to filing. The team was knowledgeable, supportive, and always available whenever I needed assistance. I would definitely recommend Shikshan Mandal to anyone looking for professional IP services.",
+  },
+];
+
 export function LandingSections() {
   return (
     <>
@@ -133,12 +160,24 @@ export function LandingSections() {
       </section>
 
       <section id="testimonials" className="approved-section approved-section--testimonials">
-        <div className="approved-testimonial">
-          <FaRegGem aria-hidden="true" />
-          <blockquote>
-            "Responsive support, clear guidance and dependable follow-up through every IP registration and publication milestone."
-          </blockquote>
-          <span>Customer Feedback &amp; Service Experience</span>
+        <div className="approved-section__heading approved-section__heading--testimonials">
+          <p>TESTIMONIALS</p>
+          <h2>Customer feedback from our registration journey.</h2>
+          <span>Professional support, transparent communication and dependable filing execution.</span>
+        </div>
+        <div className="approved-testimonial-slider" aria-label="Customer feedback carousel">
+          <div className="approved-testimonial-track">
+            {[...testimonials, ...testimonials].map((testimonial, index) => (
+              <article className="approved-testimonial-card" key={`${testimonial.name}-${index}`}>
+                <div className="approved-testimonial-card__top">
+                  <FaRegGem aria-hidden="true" />
+                  <span>{testimonial.service}</span>
+                </div>
+                <blockquote>&quot;{testimonial.quote}&quot;</blockquote>
+                <footer>{testimonial.name}</footer>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
