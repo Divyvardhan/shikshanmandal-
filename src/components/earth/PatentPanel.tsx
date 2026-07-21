@@ -35,9 +35,7 @@ export function PatentPanel({ country }: { country: CountryMarker | null }) {
             ))}
           </div>
           <div className="shikshan-earth__panel-actions">
-            <a href="https://wa.me/919557332408" target="_blank" rel="noreferrer">Apply Now</a>
             <a href="https://wa.me/919557332408" target="_blank" rel="noreferrer">Talk to Expert</a>
-            <a href="#services">Learn More</a>
           </div>
         </>
       ) : (

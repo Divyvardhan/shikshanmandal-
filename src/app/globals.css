@@ -1587,25 +1587,20 @@ body {
 
 .shikshan-earth__panel-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.45rem;
+  grid-template-columns: 1fr;
   margin-top: 1rem;
 }
 
 .shikshan-earth__panel-actions a {
-  border: 1px solid rgba(244, 234, 215, 0.14);
+  border: 1px solid rgba(244, 201, 106, 0.38);
   border-radius: 0.38rem;
-  padding: 0.58rem 0.42rem;
+  padding: 0.72rem 0.85rem;
+  background: rgba(244, 201, 106, 0.16);
   color: #fff8e9;
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   font-weight: 900;
   text-align: center;
   text-decoration: none;
-}
-
-.shikshan-earth__panel-actions a:first-child {
-  border-color: rgba(244, 201, 106, 0.38);
-  background: rgba(244, 201, 106, 0.16);
 }
 
 .earth-marker-tooltip {
