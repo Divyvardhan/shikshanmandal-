@@ -826,13 +826,36 @@ body {
 }
 
 @media (min-width: 901px) {
+  .approved-hero {
+    display: flex;
+    min-height: clamp(46rem, 52vw, 54rem);
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(2.2rem, 3vw, 3.25rem) clamp(1.4rem, 3.8vw, 2.8rem) 1.35rem;
+  }
+
   .approved-hero__content {
-    max-height: calc(100% - 8.6rem);
-    overflow: visible;
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(45rem, 55vw);
+    max-height: none;
+    padding: 0;
   }
 
   .approved-hero__content h1 {
-    max-width: 12.5ch;
+    max-width: 13ch;
+    font-size: clamp(2.65rem, 4.2vw, 4.25rem);
+    line-height: 1.04;
+  }
+
+  .approved-stats {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    margin-top: clamp(2.4rem, 4vw, 4.2rem);
   }
 }
 
