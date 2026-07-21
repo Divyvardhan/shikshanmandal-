@@ -607,7 +607,8 @@ body {
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  transform: rotate(-7deg);
+  line-height: 1;
+  text-align: center;
 }
 
 .approved-card svg {
