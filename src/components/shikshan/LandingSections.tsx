@@ -173,7 +173,7 @@ export function LandingSections() {
                   <FaRegGem aria-hidden="true" />
                   <span>{testimonial.service}</span>
                 </div>
-                <blockquote>&quot;{testimonial.quote}&quot;</blockquote>
+                <blockquote>{testimonial.quote}</blockquote>
                 <footer>{testimonial.name}</footer>
               </article>
             ))}
