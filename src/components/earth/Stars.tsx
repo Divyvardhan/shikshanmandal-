@@ -5,6 +5,37 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
+const starVertexShader = `
+  attribute float size;
+  varying vec3 vColor;
+
+  void main() {
+    vColor = color;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = size * (320.0 / max(1.0, -mvPosition.z));
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const starFragmentShader = `
+  uniform float opacity;
+  varying vec3 vColor;
+
+  void main() {
+    vec2 uv = gl_PointCoord - vec2(0.5);
+    float distanceFromCenter = length(uv);
+    float core = smoothstep(0.5, 0.0, distanceFromCenter);
+    float glow = smoothstep(0.5, 0.12, distanceFromCenter);
+    float alpha = (core * 0.72 + glow * 0.28) * opacity;
+
+    if (alpha < 0.02) {
+      discard;
+    }
+
+    gl_FragColor = vec4(vColor, alpha);
+  }
+`;
+
 export function PremiumStars({ compact }: { compact: boolean }) {
   return (
     <>
@@ -18,6 +49,8 @@ export function PremiumStars({ compact }: { compact: boolean }) {
 function GlowingStarField({ compact }: { compact: boolean }) {
   const pointsRef = useRef<THREE.Points>(null);
   const haloRef = useRef<THREE.Points>(null);
+  const pointMaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const haloMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const starCount = compact ? 240 : 760;
 
   const { positions, colors, sizes } = useMemo(() => {
@@ -55,13 +88,15 @@ function GlowingStarField({ compact }: { compact: boolean }) {
     if (pointsRef.current) {
       pointsRef.current.rotation.y = time * 0.006;
       pointsRef.current.rotation.z = Math.sin(time * 0.08) * 0.012;
-      const material = pointsRef.current.material as THREE.PointsMaterial;
-      material.opacity = compact ? 0.78 : 0.9 + Math.sin(time * 0.75) * 0.08;
+    }
+    if (pointMaterialRef.current) {
+      pointMaterialRef.current.uniforms.opacity.value = compact ? 0.78 : 0.9 + Math.sin(time * 0.75) * 0.08;
     }
     if (haloRef.current) {
       haloRef.current.rotation.y = time * 0.004;
-      const material = haloRef.current.material as THREE.PointsMaterial;
-      material.opacity = compact ? 0.22 : 0.32 + Math.sin(time * 0.5) * 0.05;
+    }
+    if (haloMaterialRef.current) {
+      haloMaterialRef.current.uniforms.opacity.value = compact ? 0.22 : 0.32 + Math.sin(time * 0.5) * 0.05;
     }
   });
 
@@ -71,17 +106,35 @@ function GlowingStarField({ compact }: { compact: boolean }) {
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions.slice(), 3]} />
           <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-          <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
+          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 300 : 360)), 1]} />
         </bufferGeometry>
-        <pointsMaterial size={compact ? 0.11 : 0.17} vertexColors transparent opacity={0.28} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <shaderMaterial
+          ref={haloMaterialRef}
+          vertexShader={starVertexShader}
+          fragmentShader={starFragmentShader}
+          uniforms={{ opacity: { value: 0.28 } }}
+          vertexColors
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
       </points>
       <points ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
           <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-          <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
+          <bufferAttribute attach="attributes-size" args={[sizes.map((size) => size * (compact ? 118 : 142)), 1]} />
         </bufferGeometry>
-        <pointsMaterial size={compact ? 0.04 : 0.062} vertexColors transparent opacity={0.9} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <shaderMaterial
+          ref={pointMaterialRef}
+          vertexShader={starVertexShader}
+          fragmentShader={starFragmentShader}
+          uniforms={{ opacity: { value: 0.9 } }}
+          vertexColors
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
       </points>
     </>
   );
@@ -90,12 +143,15 @@ function GlowingStarField({ compact }: { compact: boolean }) {
 function GalaxyBand({ compact }: { compact: boolean }) {
   const bandRef = useRef<THREE.Points>(null);
   const coreRef = useRef<THREE.Points>(null);
+  const bandMaterialRef = useRef<THREE.ShaderMaterial>(null);
+  const coreMaterialRef = useRef<THREE.ShaderMaterial>(null);
   const dustCount = compact ? 180 : 740;
   const coreCount = compact ? 70 : 240;
 
   const dust = useMemo(() => {
     const positions = new Float32Array(dustCount * 3);
     const colors = new Float32Array(dustCount * 3);
+    const sizes = new Float32Array(dustCount);
     const gold = new THREE.Color("#f3d491");
     const blue = new THREE.Color("#8fc8ff");
     const pearl = new THREE.Color("#fff6df");
@@ -112,14 +168,16 @@ function GalaxyBand({ compact }: { compact: boolean }) {
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
+      sizes[i] = THREE.MathUtils.lerp(compact ? 6.5 : 8, compact ? 18 : 26, Math.random());
     }
 
-    return { positions, colors };
-  }, [dustCount]);
+    return { positions, colors, sizes };
+  }, [compact, dustCount]);
 
   const core = useMemo(() => {
     const positions = new Float32Array(coreCount * 3);
     const colors = new Float32Array(coreCount * 3);
+    const sizes = new Float32Array(coreCount);
     const gold = new THREE.Color("#f8dc9c");
     const ice = new THREE.Color("#cfe6ff");
 
@@ -134,24 +192,27 @@ function GalaxyBand({ compact }: { compact: boolean }) {
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
+      sizes[i] = THREE.MathUtils.lerp(compact ? 14 : 18, compact ? 30 : 42, Math.random());
     }
 
-    return { positions, colors };
-  }, [coreCount]);
+    return { positions, colors, sizes };
+  }, [compact, coreCount]);
 
   useFrame(({ clock }) => {
     const time = clock.elapsedTime;
     if (bandRef.current) {
       bandRef.current.rotation.z = -0.24 + Math.sin(time * 0.06) * 0.018;
       bandRef.current.rotation.y = time * 0.003;
-      const material = bandRef.current.material as THREE.PointsMaterial;
-      material.opacity = compact ? 0.26 : 0.38 + Math.sin(time * 0.35) * 0.04;
+    }
+    if (bandMaterialRef.current) {
+      bandMaterialRef.current.uniforms.opacity.value = compact ? 0.26 : 0.38 + Math.sin(time * 0.35) * 0.04;
     }
     if (coreRef.current) {
       coreRef.current.rotation.z = -0.24;
       coreRef.current.rotation.y = time * 0.005;
-      const material = coreRef.current.material as THREE.PointsMaterial;
-      material.opacity = compact ? 0.34 : 0.5 + Math.sin(time * 0.42) * 0.05;
+    }
+    if (coreMaterialRef.current) {
+      coreMaterialRef.current.uniforms.opacity.value = compact ? 0.34 : 0.5 + Math.sin(time * 0.42) * 0.05;
     }
   });
 
@@ -161,15 +222,35 @@ function GalaxyBand({ compact }: { compact: boolean }) {
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[dust.positions, 3]} />
           <bufferAttribute attach="attributes-color" args={[dust.colors, 3]} />
+          <bufferAttribute attach="attributes-size" args={[dust.sizes, 1]} />
         </bufferGeometry>
-        <pointsMaterial size={compact ? 0.06 : 0.085} vertexColors transparent opacity={0.34} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <shaderMaterial
+          ref={bandMaterialRef}
+          vertexShader={starVertexShader}
+          fragmentShader={starFragmentShader}
+          uniforms={{ opacity: { value: 0.34 } }}
+          vertexColors
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
       </points>
       <points ref={coreRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[core.positions, 3]} />
           <bufferAttribute attach="attributes-color" args={[core.colors, 3]} />
+          <bufferAttribute attach="attributes-size" args={[core.sizes, 1]} />
         </bufferGeometry>
-        <pointsMaterial size={compact ? 0.12 : 0.17} vertexColors transparent opacity={0.46} depthWrite={false} blending={THREE.AdditiveBlending} />
+        <shaderMaterial
+          ref={coreMaterialRef}
+          vertexShader={starVertexShader}
+          fragmentShader={starFragmentShader}
+          uniforms={{ opacity: { value: 0.46 } }}
+          vertexColors
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
       </points>
     </>
   );
