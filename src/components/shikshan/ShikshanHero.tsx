@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   FaBookOpen,
   FaCalendarDays,
@@ -28,7 +29,32 @@ const navItems = [
   { label: "Contact Us", href: "#contact-us" },
 ];
 
+const heroSlides = [
+  {
+    src: "/brand/approved-hero-right-visual-rtl-order.jpeg",
+    alt: "Shikshan Mandal academic profile support",
+    kind: "profile",
+  },
+  {
+    src: "/brand/cadsari-2026-conference.png",
+    alt: "CADSARI 2026 conference announcement",
+    kind: "conference",
+  },
+] as const;
+
 export function ShikshanHero() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % heroSlides.length);
+    }, 6500);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const isConferenceSlide = heroSlides[activeSlide].kind === "conference";
+
   return (
     <section className="approved-landing" aria-labelledby="hero-title">
       <header className="approved-nav">
@@ -59,16 +85,23 @@ export function ShikshanHero() {
         </a>
       </header>
 
-      <div className="approved-hero">
+      <div className={`approved-hero${isConferenceSlide ? " is-conference-slide" : ""}`}>
         <div className="approved-hero__backdrop" aria-hidden="true">
-          <Image
-            src="/brand/approved-hero-right-visual-rtl-order.jpeg"
-            alt=""
-            fill
-            sizes="100vw"
-            priority
-            className="approved-hero__background-image"
-          />
+          {heroSlides.map((slide, index) => (
+            <div
+              key={slide.src}
+              className={`approved-hero__slide${index === activeSlide ? " is-active" : ""} approved-hero__slide--${slide.kind}`}
+            >
+              <Image
+                src={slide.src}
+                alt=""
+                fill
+                sizes="100vw"
+                priority={index === 0}
+                className="approved-hero__background-image"
+              />
+            </div>
+          ))}
         </div>
         <div className="approved-hero__overlay" />
         <div className="approved-hero__content">
@@ -90,6 +123,18 @@ export function ShikshanHero() {
                 <small>{stat.label}</small>
               </span>
             </div>
+          ))}
+        </div>
+        <div className="approved-hero__pagination" aria-label="Hero slides">
+          {heroSlides.map((slide, index) => (
+            <button
+              key={slide.src}
+              type="button"
+              className={index === activeSlide ? "is-active" : ""}
+              onClick={() => setActiveSlide(index)}
+              aria-label={`Show ${slide.kind === "conference" ? "CADSARI 2026 conference" : "Shikshan Mandal"} slide`}
+              aria-current={index === activeSlide ? "true" : undefined}
+            />
           ))}
         </div>
       </div>

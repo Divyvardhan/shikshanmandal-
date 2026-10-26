@@ -339,6 +339,21 @@ body {
   background: #000000;
 }
 
+.approved-hero__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.approved-hero__slide.is-active {
+  opacity: 1;
+}
+
+.approved-hero__slide--conference {
+  background: #ffffff;
+}
+
 .approved-hero__background-image {
   position: absolute;
   inset: 0 !important;
@@ -346,6 +361,10 @@ body {
   height: 100% !important;
   object-fit: fill;
   object-position: center center;
+}
+
+.approved-hero__slide--conference .approved-hero__background-image {
+  object-fit: contain;
 }
 
 .approved-hero__cloth {
@@ -459,6 +478,44 @@ body {
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
   backdrop-filter: blur(12px);
   opacity: 1;
+  transition: opacity 350ms ease, transform 350ms ease;
+}
+
+.approved-hero.is-conference-slide .approved-hero__overlay {
+  opacity: 0;
+}
+
+.approved-hero.is-conference-slide .approved-hero__content,
+.approved-hero.is-conference-slide .approved-stats {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(0.75rem);
+}
+
+.approved-hero__pagination {
+  position: absolute;
+  z-index: 4;
+  right: 50%;
+  bottom: 0.85rem;
+  display: flex;
+  gap: 0.5rem;
+  transform: translateX(50%);
+}
+
+.approved-hero__pagination button {
+  width: 0.58rem;
+  height: 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  padding: 0;
+  background: rgba(3, 9, 24, 0.42);
+  cursor: pointer;
+  transition: width 220ms ease, background 220ms ease;
+}
+
+.approved-hero__pagination button.is-active {
+  width: 1.75rem;
+  background: var(--approved-red);
 }
 
 .approved-stat {
