@@ -1071,6 +1071,16 @@ body {
     min-height: auto;
   }
 
+  .approved-hero.is-conference-slide {
+    min-height: 0;
+    aspect-ratio: 1166 / 734;
+  }
+
+  .approved-hero.is-conference-slide .approved-hero__content,
+  .approved-hero.is-conference-slide .approved-stats {
+    display: none;
+  }
+
   .approved-hero__content {
     position: relative;
     width: min(32rem, 100%);
