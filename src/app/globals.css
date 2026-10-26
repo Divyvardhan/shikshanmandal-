@@ -364,7 +364,7 @@ body {
 }
 
 .approved-hero__slide--conference .approved-hero__background-image {
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .approved-hero__cloth {
