@@ -352,6 +352,18 @@ body {
 
 .approved-hero__slide--conference {
   background: #ffffff;
+  overflow: hidden;
+}
+
+.approved-hero__slide--conference::before {
+  position: absolute;
+  z-index: 0;
+  inset: -2rem;
+  background: url("/brand/cadsari-2026-conference.png") center / cover no-repeat;
+  content: "";
+  filter: blur(22px);
+  opacity: 0.42;
+  transform: scale(1.08);
 }
 
 .approved-hero__background-image {
@@ -364,7 +376,8 @@ body {
 }
 
 .approved-hero__slide--conference .approved-hero__background-image {
-  object-fit: cover;
+  z-index: 1;
+  object-fit: contain;
 }
 
 .approved-hero__cloth {
