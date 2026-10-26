@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaBookOpen,
   FaCalendarDays,
@@ -44,6 +44,7 @@ const heroSlides = [
 
 export function ShikshanHero() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -54,6 +55,20 @@ export function ShikshanHero() {
   }, []);
 
   const isConferenceSlide = heroSlides[activeSlide].kind === "conference";
+
+  const showSlide = (index: number) => {
+    setActiveSlide((index + heroSlides.length) % heroSlides.length);
+  };
+
+  const handleTouchEnd = (endX: number) => {
+    if (touchStartX.current === null) return;
+
+    const swipeDistance = endX - touchStartX.current;
+    touchStartX.current = null;
+
+    if (Math.abs(swipeDistance) < 50) return;
+    showSlide(activeSlide + (swipeDistance < 0 ? 1 : -1));
+  };
 
   return (
     <section className="approved-landing" aria-labelledby="hero-title">
@@ -85,7 +100,13 @@ export function ShikshanHero() {
         </a>
       </header>
 
-      <div className={`approved-hero${isConferenceSlide ? " is-conference-slide" : ""}`}>
+      <div
+        className={`approved-hero${isConferenceSlide ? " is-conference-slide" : ""}`}
+        onTouchStart={(event) => {
+          touchStartX.current = event.touches[0]?.clientX ?? null;
+        }}
+        onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0]?.clientX ?? 0)}
+      >
         <div className="approved-hero__backdrop" aria-hidden="true">
           {heroSlides.map((slide, index) => (
             <div
@@ -131,7 +152,7 @@ export function ShikshanHero() {
               key={slide.src}
               type="button"
               className={index === activeSlide ? "is-active" : ""}
-              onClick={() => setActiveSlide(index)}
+              onClick={() => showSlide(index)}
               aria-label={`Show ${slide.kind === "conference" ? "CADSARI 2026 conference" : "Shikshan Mandal"} slide`}
               aria-current={index === activeSlide ? "true" : undefined}
             />
