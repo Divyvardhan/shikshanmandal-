@@ -48,7 +48,7 @@ export function ShikshanHero() {
   useEffect(() => {
     const interval = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % heroSlides.length);
-    }, 6500);
+    }, 4500);
 
     return () => window.clearInterval(interval);
   }, []);
